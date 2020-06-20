@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { Form, Button } from 'semantic-ui-react'
 import Auth from '../auth/Auth'
-import { getUploadUrl, uploadFile } from '../api/todos-api'
+import { getUploadUrl, uploadFile, patchTodoFile } from '../api/todos-api'
 
 enum UploadState {
   NoUpload,
   FetchingPresignedUrl,
-  UploadingFile,
+  UploadingFile
 }
 
 interface EditTodoProps {
@@ -28,7 +28,7 @@ export class EditTodo extends React.PureComponent<
   EditTodoState
 > {
   state: EditTodoState = {
-    file: undefined,
+    file: File,
     uploadState: UploadState.NoUpload
   }
 
@@ -50,8 +50,14 @@ export class EditTodo extends React.PureComponent<
         return
       }
 
+      console.log(`${JSON.stringify(this.state.file.name)}`)
+
       this.setUploadState(UploadState.FetchingPresignedUrl)
-      const uploadUrl = await getUploadUrl(this.props.auth.getIdToken(), this.props.match.params.todoId)
+      const uploadUrl = await getUploadUrl(
+        this.props.auth.getIdToken(),
+        this.props.match.params.todoId,
+        this.state.file.name
+      )
 
       this.setUploadState(UploadState.UploadingFile)
       await uploadFile(uploadUrl, this.state.file)
@@ -61,6 +67,11 @@ export class EditTodo extends React.PureComponent<
       alert('Could not upload a file: ' + e.message)
     } finally {
       this.setUploadState(UploadState.NoUpload)
+      await patchTodoFile(
+        this.props.auth.getIdToken(),
+        this.props.match.params.todoId,
+        this.state.file.name
+      )
     }
   }
 
@@ -93,11 +104,14 @@ export class EditTodo extends React.PureComponent<
   }
 
   renderButton() {
-
     return (
       <div>
-        {this.state.uploadState === UploadState.FetchingPresignedUrl && <p>Uploading image metadata</p>}
-        {this.state.uploadState === UploadState.UploadingFile && <p>Uploading file</p>}
+        {this.state.uploadState === UploadState.FetchingPresignedUrl && (
+          <p>Uploading image metadata</p>
+        )}
+        {this.state.uploadState === UploadState.UploadingFile && (
+          <p>Uploading file</p>
+        )}
         <Button
           loading={this.state.uploadState !== UploadState.NoUpload}
           type="submit"

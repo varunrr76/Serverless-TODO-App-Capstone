@@ -34,6 +34,7 @@ interface TodosState {
   newTodoDueDate: string
   loadingTodos: boolean
   startdate: Date
+  attachmentUrl: string
 }
 
 // const usaTime = new Date().toLocaleString('en-US', {
@@ -46,7 +47,8 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     newTodoName: '',
     newTodoDueDate: moment(new Date()).format().substring(0, 10), //new Date().toISOString().substring(0, 10),
     loadingTodos: true,
-    startdate: new Date()
+    startdate: new Date(),
+    attachmentUrl: ''
   }
 
   handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -203,15 +205,21 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
               <Grid.Column width={3} floated="right">
                 {todo.dueDate}
               </Grid.Column>
-              <Grid.Column width={1} floated="right">
-                <Button
-                  icon
-                  color="blue"
-                  onClick={() => this.onEditButtonClick(todo.todoId)}
-                >
-                  <Icon name="pencil" />
-                </Button>
-              </Grid.Column>
+              {this.state.attachmentUrl == '' ? (
+                <Grid.Column width={1} floated="right">
+                  <Button
+                    icon
+                    color="blue"
+                    onClick={() => this.onEditButtonClick(todo.todoId)}
+                  >
+                    <Icon name="pencil" />
+                  </Button>
+                </Grid.Column>
+              ) : (
+                <Grid.Column width={1} floated="right">
+                  <a href={this.state.attachmentUrl}>link text</a>
+                </Grid.Column>
+              )}
               <Grid.Column width={1} floated="right">
                 <Button
                   icon

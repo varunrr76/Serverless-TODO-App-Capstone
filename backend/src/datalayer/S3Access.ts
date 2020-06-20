@@ -9,8 +9,16 @@ const filesBucketName = process.env.FILES_S3_BUCKET
 
 const urlExpiration = process.env.SIGNED_URL_EXPIRATION
 
-export async function getUploadUrl(todoId: string) {
+export async function getPutSignedUrl(todoId: string) {
   return s3.getSignedUrl('putObject', {
+    Bucket: filesBucketName,
+    Key: todoId,
+    Expires: urlExpiration
+  })
+}
+
+export async function getGetSignedUrl(todoId: string) {
+  return s3.getSignedUrl('getObject', {
     Bucket: filesBucketName,
     Key: todoId,
     Expires: urlExpiration
