@@ -17,10 +17,10 @@ export async function getPutSignedUrl(todoId: string) {
   })
 }
 
-export async function getGetSignedUrl(todoId: string) {
-  return s3.getSignedUrl('getObject', {
-    Bucket: filesBucketName,
-    Key: todoId,
-    Expires: urlExpiration
-  })
-}
+// export async function getGetSignedUrl(todoId: string) {
+//   return s3.getSignedUrl('getObject', {
+//     Bucket: filesBucketName,
+//     Key: todoId,
+//     Expires: urlExpiration
+//   })
+// }

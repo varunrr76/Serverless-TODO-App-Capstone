@@ -7,7 +7,7 @@ import {
 } from 'aws-lambda'
 import { createLogger } from '../../utils/logger'
 
-import { getUploadUrl } from '../../datalayer/S3Access'
+import { getPutSignedUrl } from '../../datalayer/S3Access'
 
 const logger = createLogger('Uploadfile')
 
@@ -16,7 +16,7 @@ export const handler: APIGatewayProxyHandler = async (
 ): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
   logger.info(`Received request for signed url of : ${todoId}`)
-  const url = await getUploadUrl(todoId)
+  const url = await getPutSignedUrl(todoId)
   logger.info(`Received signed url of ${todoId}: ${url}`)
 
   return {
