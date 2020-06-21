@@ -21,7 +21,7 @@ export const handler: APIGatewayProxyHandler = async (
 
   try {
     nextKey = await parseNextKeyParameter(event)
-    limit = (await parseLimitParameter(event)) || 2
+    limit = (await parseLimitParameter(event)) || 10
     logger.info(`nextKey: ${nextKey}`)
     logger.info(`limit: ${limit}`)
   } catch (e) {
