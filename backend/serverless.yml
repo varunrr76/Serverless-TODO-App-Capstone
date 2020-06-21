@@ -101,6 +101,25 @@ functions:
           - dynamodb:UpdateItem
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}
 
+  AttachTodoFile:
+    handler: src/lambda/http/attachTodoFile.handler
+    events:
+      - http:
+          method: patch
+          path: todos/{todoId}/attachment
+          cors: true
+          documentation:
+            summary: Attach a file to todo
+            description: Attach a file to todo
+            requestModels:
+              "application/json": UpdateTodoRequest
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:getItem
+          - dynamodb:UpdateItem
+        Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODO_TABLE}
+
   DeleteTodo:
     handler: src/lambda/http/deleteTodo.handler
     events:

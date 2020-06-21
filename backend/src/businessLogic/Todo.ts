@@ -37,3 +37,7 @@ export async function getTodos(token: string, limit: number, nextKey) {
   const userId = await parseUserId(token)
   return await todoAccess.getTodos(userId, limit, nextKey)
 }
+
+export async function attachTodoFile(todoId: string, fileName: string) {
+  return await todoAccess.attachTodoFile(todoId, fileName)
+}

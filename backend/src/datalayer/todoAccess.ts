@@ -91,7 +91,7 @@ export class TodoAccess {
       logger.error('todoId Not Present')
       resp = {
         status: 404,
-        results: `logger.error('todoId Not Present')`
+        results: `todoId Not Present`
       }
     } else {
       logger.info(`${JSON.stringify(updatedTodo.name)}`)
@@ -189,8 +189,53 @@ export class TodoAccess {
 
     return JSON.stringify(result) === '{}'
   }
-}
 
+  async attachTodoFile(
+    todoId: string,
+    fileName: string
+  ): Promise<DataAccessResponse> {
+    var resp
+    if (await this.todoItemExists(todoId)) {
+      logger.error('todoId Not Present')
+      resp = {
+        status: 404,
+        results: `logger.error('todoId Not Present')`
+      }
+    } else {
+      logger.info(`${JSON.stringify(fileName)}`)
+      await this.docClient
+        .update({
+          TableName: this.todoTable,
+          Key: {
+            todoId: todoId
+          },
+          UpdateExpression: 'set attachmentUrl = :aUrl',
+          ExpressionAttributeValues: {
+            ':aUrl': fileName
+          },
+          ReturnValues: 'UPDATED_NEW'
+        })
+        .promise()
+        .then((data) => {
+          logger.info(`Successfully updated to ${JSON.stringify(data)}`)
+          resp = {
+            status: 200,
+            results: JSON.stringify(data)
+          }
+        })
+        .catch((err) => {
+          logger.error(
+            `Failed to update todo!! Check with DynamoDB connection. \n ${err}`
+          )
+          resp = {
+            status: 500,
+            results: `Failed to update todo!! Check with DynamoDB connection. \n ${err}`
+          }
+        })
+    }
+    return resp as DataAccessResponse
+  }
+}
 function createDynamoDBClient() {
   if (process.env.IS_OFFLINE) {
     logger.info('Creating a local DynamoDB instance')
