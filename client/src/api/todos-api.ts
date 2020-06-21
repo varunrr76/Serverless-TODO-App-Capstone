@@ -4,16 +4,23 @@ import { CreateTodoRequest } from '../types/CreateTodoRequest'
 import Axios from 'axios'
 import { UpdateTodoRequest } from '../types/UpdateTodoRequest'
 
+var lastKey: string
+var limit: number = 2
+
 export async function getTodos(idToken: string): Promise<Todo[]> {
   console.log('Fetching todos')
 
-  const response = await Axios.get(`${apiEndpoint}/todos`, {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`
+  const response = await Axios.get(
+    `${apiEndpoint}/todos?limit=${limit}&lastKey=${lastKey}`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`
+      }
     }
-  })
+  )
   console.log('Todos:', response.data)
+  lastKey = response.data.LastEvaluatedKey
   return response.data.Items
 }
 

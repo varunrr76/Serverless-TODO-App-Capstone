@@ -37,10 +37,6 @@ interface TodosState {
   attachmentUrl: string
 }
 
-// const usaTime = new Date().toLocaleString('en-US', {
-//   timeZone: 'America/New_York'
-// })
-
 export class Todos extends React.PureComponent<TodosProps, TodosState> {
   state: TodosState = {
     todos: [],
@@ -130,6 +126,8 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         {this.renderCreateTodoInput()}
 
         {this.renderTodos()}
+
+        {this.renderNextButton()}
       </div>
     )
   }
@@ -240,5 +238,9 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
         })}
       </Grid>
     )
+  }
+
+  renderNextButton() {
+    return <Button color="blue">Click Here</Button>
   }
 }
