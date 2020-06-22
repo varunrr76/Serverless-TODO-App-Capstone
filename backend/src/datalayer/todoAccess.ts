@@ -102,7 +102,8 @@ export class TodoAccess {
           Key: {
             todoId: todoId
           },
-          UpdateExpression: 'set #task_name = :n, dueDate = :dD, done = :d',
+          UpdateExpression:
+            'set #task_name = :n, dueDate = :dD, done = :d, pflag = :pf',
           ExpressionAttributeValues: {
             ':n': updatedTodo.name,
             ':dD': updatedTodo.dueDate,
