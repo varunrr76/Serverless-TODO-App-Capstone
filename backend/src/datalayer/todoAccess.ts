@@ -106,7 +106,8 @@ export class TodoAccess {
           ExpressionAttributeValues: {
             ':n': updatedTodo.name,
             ':dD': updatedTodo.dueDate,
-            ':d': updatedTodo.done
+            ':d': updatedTodo.done,
+            ':pf': updatedTodo.pflag
           },
           ExpressionAttributeNames: {
             '#task_name': 'name'

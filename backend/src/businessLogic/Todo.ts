@@ -21,6 +21,7 @@ export async function createTodo(
     todoId: todoId,
     ...createTodoRequest,
     done: false,
+    pflag: false,
     createdAt: new Date().toISOString()
   })
 }
