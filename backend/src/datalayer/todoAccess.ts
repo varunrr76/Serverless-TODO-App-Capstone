@@ -8,6 +8,7 @@ import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { createLogger } from '../utils/logger'
 import { DataAccessResponse } from '../models/DataAccessResponse'
+import { getGetSignedUrl } from '../datalayer/S3Access'
 
 const logger = createLogger('TodoAccess')
 
@@ -155,6 +156,11 @@ export class TodoAccess {
       .then((data) => {
         logger.info('Successfully Retrieved!')
         logger.info(`${data}`)
+        data.Items.map((item) => {
+          if (item.attachmentUrl) {
+            item.attachmentUrl = getGetSignedUrl(item.attachmentUrl)
+          }
+        })
         resp = {
           status: 201,
           results: JSON.stringify({

@@ -16,7 +16,7 @@ export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
-  const fileName = event.queryStringParameters['filename']
+  const fileName = todoId + '-' + event.queryStringParameters['filename']
   logger.info(
     `recieved request for attaching the file ${fileName} to ${todoId}!!`
   )

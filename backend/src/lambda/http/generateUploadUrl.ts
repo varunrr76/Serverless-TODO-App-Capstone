@@ -15,8 +15,9 @@ export const handler: APIGatewayProxyHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
   const todoId = event.pathParameters.todoId
+  const fileName = event.queryStringParameters['filename']
   logger.info(`Received request for signed url of : ${todoId}`)
-  const url = await getPutSignedUrl(todoId)
+  const url = getPutSignedUrl(todoId + '-' + fileName)
   logger.info(`Received signed url of ${todoId}: ${url}`)
 
   return {
