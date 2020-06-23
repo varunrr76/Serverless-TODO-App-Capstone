@@ -152,6 +152,26 @@ functions:
           - s3:PutObject
         Resource: arn:aws:s3:::${self:provider.environment.FILES_S3_BUCKET}/*
 
+  SyncWithElasticsearch:
+    environment:
+      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
+    handler: src/datalayer/elasticSearchSync.handler
+    events:
+      - stream:
+          type: dynamodb
+          arn: !GetAtt TodoDynamoDBTable.StreamArn
+
+  QueryElasticSearch:
+    environment:
+      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
+    handler: src/datalayer/elasticSearchQuery.handler
+    events:
+      - http:
+          method: get
+          path: todos/search
+          cors: true
+          authorizer: Auth
+
 resources:
   Resources:
     GatewayResponseDefault4XX:
@@ -220,6 +240,8 @@ resources:
           - AttributeName: todoId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
+        StreamSpecification:
+          StreamViewType: NEW_IMAGE
         TableName: ${self:provider.environment.TODO_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.TODO_TABLE_INDEX}
@@ -230,3 +252,28 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
+
+    TodosSearch:
+      Type: AWS::Elasticsearch::Domain
+      Properties:
+        ElasticsearchVersion: "7.4"
+        DomainName: todos-search-${self:provider.stage}
+        ElasticsearchClusterConfig:
+          DedicatedMasterEnabled: false
+          InstanceCount: "1"
+          ZoneAwarenessEnabled: false
+          InstanceType: t2.small.elasticsearch
+        EBSOptions:
+          EBSEnabled: true
+          Iops: 0
+          VolumeSize: 10
+          VolumeType: "gp2"
+
+        AccessPolicies:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                AWS: "*"
+              Action: "es:*"
+              Resource: "*"
