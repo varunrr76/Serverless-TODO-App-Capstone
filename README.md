@@ -27,7 +27,7 @@ Tasks Sortby Prioirty:
 Tasks Search:
 
 <div align="center">
-<img  src="img/Client3cleansearch.png" width="800" height="4=600" >
+<img  src="img/Client3cleansearch.png" width="800" height="400" >
 </div>
 
 ## TODO items
