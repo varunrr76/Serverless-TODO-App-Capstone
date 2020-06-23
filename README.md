@@ -5,7 +5,7 @@ To implement this project, you need to implement a simple TODO application using
 ## AWS Architecture of the application
 
 <div align="center">
-<img  src="img/ServerlesssTODOAppArchitecture.png" width="400" height="400" >
+<img  src="img/ServerlesssTODOAppArchitecture.png" width="800" height="600" >
 </div>
 
 ## Functionality of the application
@@ -15,19 +15,19 @@ This application will allow creating/removing/updating/fetching TODO items. Each
 Tasks:
 
 <div align="center">
-<img  src="img/Client1.png" width="400" height="400" >
+<img  src="img/Client1.png" width="800" height="600" >
 </div>
 
 Tasks Sortby Prioirty:
 
 <div align="center">
-<img  src="img/Client1.png" width="400" height="400" >
+<img  src="img/Client2ps.png" width="800" height="600" >
 </div>
 
 Tasks Search:
 
 <div align="center">
-<img  src="img/Client1.png" width="400" height="400" >
+<img  src="img/Client3cleansearch.png" width="800" height="4=600" >
 </div>
 
 ## TODO items
