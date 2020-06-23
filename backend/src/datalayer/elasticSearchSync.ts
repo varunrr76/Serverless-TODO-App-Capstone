@@ -10,12 +10,16 @@ const es = new elasticsearch.Client({
   connectionClass: httpAwsEs
 })
 
+import { createLogger } from '../utils/logger'
+
+const logger = createLogger('queryTodos')
+
 export const handler: DynamoDBStreamHandler = async (
   event: DynamoDBStreamEvent
 ) => {
-  console.log('Processing events batch from DynamoDB', JSON.stringify(event))
+  logger.info(`Processing events batch from DynamoDB ${JSON.stringify(event)}`)
   for (const record of event.Records) {
-    console.log('Processing record', JSON.stringify(record))
+    logger.info(`Processing record ${JSON.stringify(record)}`)
     if (record.eventName === 'INSERT') {
       const newItem = record.dynamodb.NewImage
       const body = {
@@ -48,7 +52,6 @@ export const handler: DynamoDBStreamHandler = async (
         attachmentUrl = newItem.attachmentUrl.S
         body = {
           doc: {
-            todoId: newItem.todoId.S,
             name: newItem.name.S,
             dueDate: newItem.dueDate.S,
             createdAt: newItem.createdAt.S,
@@ -61,7 +64,6 @@ export const handler: DynamoDBStreamHandler = async (
       } catch (e) {
         body = {
           doc: {
-            todoId: newItem.todoId.S,
             name: newItem.name.S,
             dueDate: newItem.dueDate.S,
             createdAt: newItem.createdAt.S,
@@ -71,13 +73,20 @@ export const handler: DynamoDBStreamHandler = async (
           }
         }
       }
-
-      await es.update({
-        index: 'todos-index',
-        type: 'todos',
-        id: newItem.todoId.S,
-        body
-      })
+      logger.info(`updated body ${JSON.stringify(body)}`)
+      await es
+        .update({
+          index: 'todos-index',
+          type: 'todos',
+          id: newItem.todoId.S,
+          body
+        })
+        .then((data) => {
+          logger.info(`successfully updated ${JSON.stringify(data)}`)
+        })
+        .catch((e) => {
+          logger.info(`${e}`)
+        })
     }
   }
 }
