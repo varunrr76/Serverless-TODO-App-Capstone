@@ -4,31 +4,63 @@ import { CreateTodoRequest } from '../types/CreateTodoRequest'
 import Axios from 'axios'
 import { UpdateTodoRequest } from '../types/UpdateTodoRequest'
 
-var lastKey: string
-var limit: number
+interface getTodosInterface {
+  todos: Todo[]
+  lastEvaluatedKey: string
+}
 
-export async function getTodos(idToken: string): Promise<Todo[]> {
-  console.log('Fetching todos')
+interface getSearchTodosInterface {
+  todos: []
+  from: number
+}
 
-  const response = await Axios.get(
-    `${apiEndpoint}/todos?limit=${limit}&lastKey=${lastKey}`,
-    {
+export async function getTodos(
+  idToken: string,
+  limit?: number,
+  lastKey?: string
+): Promise<getTodosInterface> {
+  console.log(`Fetching todos`)
+  var response
+  try {
+    response = await Axios.get(
+      `${apiEndpoint}/todos?limit=${limit}&nextKey=${lastKey}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`
+        }
+      }
+    )
+  } catch (e) {
+    response = await Axios.get(`${apiEndpoint}/todos?limit=${limit}&nextKey=`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${idToken}`
       }
-    }
-  )
+    })
+  }
   console.log('Todos:', response.data)
-  lastKey = response.data.LastEvaluatedKey
-  return response.data.Items
+  // response.data.LastEvaluatedKey
+  if (lastKey === response.data.LastEvaluatedKey) {
+    return {
+      todos: [],
+      lastEvaluatedKey: lastKey
+    } as getTodosInterface
+  }
+
+  const stateProps: getTodosInterface = {
+    todos: response.data.Items,
+    lastEvaluatedKey: response.data.LastEvaluatedKey
+  }
+
+  return stateProps
 }
 
 export async function createTodo(
   idToken: string,
   newTodo: CreateTodoRequest
 ): Promise<Todo> {
-  console.log(JSON.stringify(newTodo))
+  // console.log(JSON.stringify(newTodo))
   const response = await Axios.post(
     `${apiEndpoint}/todos`,
     JSON.stringify(newTodo),
@@ -47,6 +79,7 @@ export async function patchTodo(
   todoId: string,
   updatedTodo: UpdateTodoRequest
 ): Promise<void> {
+  console.log(`patching priority ${todoId}`)
   await Axios.patch(
     `${apiEndpoint}/todos/${todoId}`,
     JSON.stringify(updatedTodo),
@@ -56,7 +89,7 @@ export async function patchTodo(
         Authorization: `Bearer ${idToken}`
       }
     }
-  )
+  ).catch((e) => {})
 }
 
 export async function patchTodoFile(
@@ -64,16 +97,19 @@ export async function patchTodoFile(
   todoId: string,
   fileName: string
 ): Promise<void> {
+  console.log(`patching the changes`)
   await Axios.patch(
-    `${apiEndpoint}/todos/${todoId}`,
-    JSON.stringify({ fileName: fileName }),
+    `${apiEndpoint}/todos/${todoId}/attachment?filename=${fileName}`,
+    {},
     {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${idToken}`
       }
     }
-  )
+  ).catch((e) => {
+    console.log(`e`)
+  })
 }
 
 export async function deleteTodo(
@@ -94,7 +130,7 @@ export async function getUploadUrl(
   filename: string
 ): Promise<string> {
   const response = await Axios.post(
-    `${apiEndpoint}/todos/${todoId}/attachment?name=${filename}`,
+    `${apiEndpoint}/todos/${todoId}/attachment?filename=${filename}`,
     '',
     {
       headers: {
@@ -111,4 +147,40 @@ export async function uploadFile(
   file: Buffer
 ): Promise<void> {
   await Axios.put(uploadUrl, file)
+}
+
+export async function getSearchTodos(
+  idToken: string,
+  searchStr: string,
+  from?: number
+): Promise<getSearchTodosInterface> {
+  console.log(`Fetching searchstr todos`)
+  var response
+  if (from) {
+    response = await Axios.get(
+      `${apiEndpoint}/todos/search?query=${searchStr}&from=${from}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`
+        }
+      }
+    )
+  } else {
+    response = await Axios.get(
+      `${apiEndpoint}/todos/search?query=${searchStr}`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`
+        }
+      }
+    )
+  }
+  const stateProps: getSearchTodosInterface = {
+    todos: response.data.Items,
+    from: from + response.data.Items.length
+  }
+
+  return stateProps
 }
