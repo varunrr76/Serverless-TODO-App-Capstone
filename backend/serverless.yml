@@ -78,7 +78,7 @@ functions:
             summary: Create a new todo
             description: Create a new todo
             requestModels:
-              "application/json": CreateTodoRequest
+              'application/json': CreateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -97,7 +97,7 @@ functions:
             summary: Update a new todo
             description: Update a new todo
             requestModels:
-              "application/json": UpdateTodoRequest
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -116,7 +116,7 @@ functions:
             summary: Attach a file to todo
             description: Attach a file to todo
             requestModels:
-              "application/json": UpdateTodoRequest
+              'application/json': UpdateTodoRequest
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -152,26 +152,6 @@ functions:
           - s3:PutObject
         Resource: arn:aws:s3:::${self:provider.environment.FILES_S3_BUCKET}/*
 
-  SyncWithElasticsearch:
-    environment:
-      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
-    handler: src/datalayer/elasticSearchSync.handler
-    events:
-      - stream:
-          type: dynamodb
-          arn: !GetAtt TodoDynamoDBTable.StreamArn
-
-  QueryElasticSearch:
-    environment:
-      ES_ENDPOINT: !GetAtt TodosSearch.DomainEndpoint
-    handler: src/datalayer/elasticSearchQuery.handler
-    events:
-      - http:
-          method: get
-          path: todos/search
-          cors: true
-          authorizer: Auth
-
 resources:
   Resources:
     GatewayResponseDefault4XX:
@@ -192,9 +172,9 @@ resources:
         CorsConfiguration:
           CorsRules:
             - AllowedOrigins:
-                - "*"
+                - '*'
               AllowedHeaders:
-                - "*"
+                - '*'
               AllowedMethods:
                 - GET
                 - PUT
@@ -208,26 +188,26 @@ resources:
       Properties:
         PolicyDocument:
           Id: MyPolicy
-          Version: "2012-10-17"
+          Version: '2012-10-17'
           Statement:
             - Sid: PublicReadForGetBucketObjects
               Effect: Allow
-              Principal: "*"
-              Action: "s3:GetObject"
-              Resource: "arn:aws:s3:::${self:provider.environment.FILES_S3_BUCKET}/*"
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: 'arn:aws:s3:::${self:provider.environment.FILES_S3_BUCKET}/*'
         Bucket: !Ref AttachmentsBucket
 
     RequestBodyValidator:
       Type: AWS::ApiGateway::RequestValidator
       Properties:
-        Name: "request-body-validator"
+        Name: 'request-body-validator'
         RestApiId:
           Ref: ApiGatewayRestApi
         ValidateRequestBody: true
         ValidateRequestParameters: false
 
     TodoDynamoDBTable:
-      Type: "AWS::DynamoDB::Table"
+      Type: 'AWS::DynamoDB::Table'
       Properties:
         AttributeDefinitions:
           - AttributeName: userId
@@ -240,8 +220,6 @@ resources:
           - AttributeName: todoId
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
-        StreamSpecification:
-          StreamViewType: NEW_IMAGE
         TableName: ${self:provider.environment.TODO_TABLE}
         GlobalSecondaryIndexes:
           - IndexName: ${self:provider.environment.TODO_TABLE_INDEX}
@@ -252,28 +230,3 @@ resources:
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL
-
-    TodosSearch:
-      Type: AWS::Elasticsearch::Domain
-      Properties:
-        ElasticsearchVersion: "7.4"
-        DomainName: todos-search-${self:provider.stage}
-        ElasticsearchClusterConfig:
-          DedicatedMasterEnabled: false
-          InstanceCount: "1"
-          ZoneAwarenessEnabled: false
-          InstanceType: t2.small.elasticsearch
-        EBSOptions:
-          EBSEnabled: true
-          Iops: 0
-          VolumeSize: 10
-          VolumeType: "gp2"
-
-        AccessPolicies:
-          Version: "2012-10-17"
-          Statement:
-            - Effect: Allow
-              Principal:
-                AWS: "*"
-              Action: "es:*"
-              Resource: "*"
