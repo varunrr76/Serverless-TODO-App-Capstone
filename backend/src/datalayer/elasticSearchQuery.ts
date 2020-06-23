@@ -8,6 +8,7 @@ import {
 } from 'aws-lambda'
 
 import { createLogger } from '../utils/logger'
+import { getGetSignedUrl } from '../datalayer/S3Access'
 
 const logger = createLogger('queryTodos')
 
@@ -45,24 +46,36 @@ export const handler: APIGatewayProxyHandler = async (
     }
   }
   const body = {
-    from,
-    size,
     query: {
-      wildcard: { name: '*' + queryString + '*' }
-    }
+      wildcard: { name: { value: queryString + '*' } }
+    },
+    sort: 'dueDate',
+    from,
+    size
   }
   const resp = await es.search({
     index: 'todos-index',
     type: 'todos',
     body
   })
+
+  let items = []
+  resp.hits.hits.map((item) => {
+    if (item._source['attachmentUrl']) {
+      item._source['attachmentUrl'] = getGetSignedUrl(
+        item._source['attachmentUrl']
+      )
+    }
+    items.push(item._source)
+  })
+  logger.info(`Query resp: ${resp}`)
   return {
     statusCode: 200,
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials': true
     },
-    body: JSON.stringify(resp)
+    body: JSON.stringify({ Items: items })
   }
 }
 

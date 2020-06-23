@@ -22,7 +22,9 @@ export const handler: DynamoDBStreamHandler = async (
         todoId: newItem.todoId.S,
         name: newItem.name.S,
         dueDate: newItem.dueDate.S,
-        createdAt: newItem.createdAt.S
+        createdAt: newItem.createdAt.S,
+        pflag: newItem.pflag.S,
+        done: newItem.done.S
       }
       await es.index({
         index: 'todos-index',
@@ -36,6 +38,25 @@ export const handler: DynamoDBStreamHandler = async (
         index: 'todos-index',
         type: 'todos',
         id: todoId
+      })
+    } else {
+      const newItem = record.dynamodb.NewImage
+      const body = {
+        doc: {
+          todoId: newItem.todoId.S,
+          name: newItem.name.S,
+          dueDate: newItem.dueDate.S,
+          createdAt: newItem.createdAt.S,
+          pflag: newItem.pflag.S,
+          done: newItem.done.S,
+          attachmentUrl: newItem.attachmentUrl.S ? newItem.attachmentUrl.S : ''
+        }
+      }
+      await es.update({
+        index: 'todos-index',
+        type: 'todos',
+        id: newItem.todoId.S,
+        body
       })
     }
   }
