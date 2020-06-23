@@ -4,18 +4,21 @@ import * as elasticsearch from 'elasticsearch'
 import * as httpAwsEs from 'http-aws-es'
 
 const esHost = process.env.ES_ENDPOINT
+import { createLogger } from '../utils/logger'
 
 const es = new elasticsearch.Client({
   hosts: [esHost],
   connectionClass: httpAwsEs
 })
 
+const logger = createLogger('TodoAccess')
+
 export const handler: DynamoDBStreamHandler = async (
   event: DynamoDBStreamEvent
 ) => {
-  console.log('Processing events batch from DynamoDB', JSON.stringify(event))
+  // console.log('Processing events batch from DynamoDB', JSON.stringify(event))
   for (const record of event.Records) {
-    console.log('Processing record', JSON.stringify(record))
+    logger.info('Processing record', JSON.stringify(record))
     if (record.eventName === 'INSERT') {
       const newItem = record.dynamodb.NewImage
       const body = {
@@ -24,12 +27,15 @@ export const handler: DynamoDBStreamHandler = async (
         dueDate: newItem.dueDate.S,
         createdAt: newItem.createdAt.S
       }
-      await es.index({
-        index: 'todos-index',
-        type: 'todos',
-        id: newItem.todoId.S,
-        body
-      })
+      await es
+        .index({
+          index: 'todos-index',
+          type: 'todos',
+          id: newItem.todoId.S,
+          body
+        })
+        .then(() => logger.info('successful insert'))
+        .catch((e) => logger.error(`error ${e}`))
     } else if (record.eventName === 'REMOVE') {
       const todoId = record.dynamodb.Keys.todoId.S
       await es.delete({

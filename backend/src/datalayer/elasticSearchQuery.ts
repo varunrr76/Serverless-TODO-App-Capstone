@@ -48,7 +48,7 @@ export const handler: APIGatewayProxyHandler = async (
     from,
     size,
     query: {
-      wildcard: { name: queryString + '*' }
+      wildcard: { name: '*' + queryString + '*' }
     }
   }
   const resp = await es.search({
