@@ -1,0 +1,424 @@
+{
+	"info": {
+		"_postman_id": "f5e75b25-d9c8-404b-a5f4-bbf516d78af4",
+		"name": "Udacity C4 Project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "TODOs",
+			"item": [
+				{
+					"name": "Get all todos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-2.amazonaws.com/dev/todos",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create todo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InRPaXlDbm9UZE5RRFJwYWZVaGtrViJ9.eyJpc3MiOiJodHRwczovL2Rldi1rZG1saTFyeS51cy5hdXRoMC5jb20vIiwic3ViIjoiYXV0aDB8NWVlYTczNzlkYWZlNjcwYjY5OGU2N2QzIiwiYXVkIjoiYm04VWVEcElpNjd6MXNpYnNMQnhlZXgxeVBDcUNib0IiLCJpYXQiOjE1OTI0Mjc0MDQsImV4cCI6MTU5MjQ2MzQwNCwiYXRfaGFzaCI6Ilg2ZjF6Z1NsYVNEcERqX0Z6ODc3U0EiLCJub25jZSI6IkVWVXZQMTBoSmU5ekU0RDZ1NjdwQ3FWUzJubW16VjF1In0.lu_RUSQRFoh4fDERLRLNUK2MXEp9e7vL9m92vSmY8JUblQcKbpACcuPRpC56pX8RwRmjpuAwYNXY-f_OTU9v16HeuEFH-pk3E1J7ZshyoMA22AwDzZgQ2jMAsWY0QMxsRv9mkBzvwy-jDh4_lJe9qkD1VvHCkhl5an9VhSkBj1AG42LMDkrIOR6E8FqS5SM2UGuhCdKUfnAI0iuf34KSkwqmjk791h7u9YxnMpCTbplekZ7hU23BmutlMFOZARH6_mQ3r-ZtEk53TQ7Px99PIW2rhFPBmMIxeCt9FQt8GBLNe0mMJW_KpjBfASNo-gpe2vnD2w-2YmhBVGOifk1OsQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Pluck Grasss\",\n\t\"dueDate\": \"2019-06-12\"\n}"
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-2.amazonaws.com/dev/todos",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update todo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"Change the world\",\n\t\"dueDate\": \"2019-12-11\",\n\t\"done\": true\n}",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-2.amazonaws.com/dev/todos/c244df99-7c84-4acf-b087-fbef90e58d7b",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos",
+								"c244df99-7c84-4acf-b087-fbef90e58d7b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete todo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{authToken}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {}
+							}
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-2.amazonaws.com/dev/todos/4db94049-fff0-4f51-bebf-2263c94a4de0",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos",
+								"4db94049-fff0-4f51-bebf-2263c94a4de0"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get attachment URL",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{authToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "file",
+							"file": {
+								"src": "/C:/Users/Varun/Desktop/AWS/nd9990-c3-microservices-exercises-master/project/udagram-deployment-scripts/img/computer.png"
+							},
+							"options": {
+								"file": {}
+							}
+						},
+						"url": {
+							"raw": "https://{{apiId}}.execute-api.us-east-2.amazonaws.com/dev/todos/c244df99-7c84-4acf-b087-fbef90e58d7b/attachment",
+							"protocol": "https",
+							"host": [
+								"{{apiId}}",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos",
+								"c244df99-7c84-4acf-b087-fbef90e58d7b",
+								"attachment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "attachfile to Todo",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": ""
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Todo by limit and lastkey",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://drbge0fsgi.execute-api.us-east-2.amazonaws.com/dev/todos?limit=10&nextKey=%7B%22todoId%22%3A%227a3d7f07-5452-4a0d-9e01-9e8ec0adafab%22%2C%22userId%22%3A%22auth0%7C5eee6317a55c1600134e06df%22%2C%22dueDate%22%3A%222020-06-27%22%7D",
+							"protocol": "https",
+							"host": [
+								"drbge0fsgi",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "nextKey",
+									"value": "%7B%22todoId%22%3A%227a3d7f07-5452-4a0d-9e01-9e8ec0adafab%22%2C%22userId%22%3A%22auth0%7C5eee6317a55c1600134e06df%22%2C%22dueDate%22%3A%222020-06-27%22%7D"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search query to ES",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{authToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://npdnslspt4.execute-api.us-east-2.amazonaws.com/dev/todos/search?query=clean&from=0&size=1",
+							"protocol": "https",
+							"host": [
+								"npdnslspt4",
+								"execute-api",
+								"us-east-2",
+								"amazonaws",
+								"com"
+							],
+							"path": [
+								"dev",
+								"todos",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "clean"
+								},
+								{
+									"key": "from",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "1dad0af2-573b-4b35-8da4-503627dd09d9",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "26863e98-ff74-4aeb-bb4c-ec721f339b3b",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			],
+			"protocolProfileBehavior": {}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "73b5fce0-c1c0-4316-bad6-60f7a0a5503f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "8c1998de-aa63-4a17-be91-4cbde65f8da2",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "bcdeb301-7b7e-46b3-85ad-c02eab3b23be",
+			"key": "apiId",
+			"value": "",
+			"disabled": true
+		},
+		{
+			"id": "82ff813d-a442-4c79-938f-86b798855a90",
+			"key": "authToken",
+			"value": ""
+		},
+		{
+			"id": "f8e8f4f9-1817-446e-ae10-c6898878cef1",
+			"key": "apiId",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
