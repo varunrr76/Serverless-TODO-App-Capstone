@@ -210,7 +210,7 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
     console.log(`Clicked Search button ${this.state.searchStr}`)
     const resp = await getSearchTodos(
       this.props.auth.getIdToken(),
-      this.state.searchStr
+      this.state.searchStr.toLowerCase()
     )
     this.setState({
       todos: resp.todos,
@@ -312,22 +312,31 @@ export class Todos extends React.PureComponent<TodosProps, TodosState> {
           />
           <Grid.Column width={1}></Grid.Column>
           <Dropdown
-            text="Filter"
-            icon="filter"
+            text="Sort"
+            icon="sort down"
             floating
             labeled
             button
             className="icon"
           >
             <Dropdown.Menu>
-              <Dropdown.Header icon="tags" content="Filter by" />
+              <Dropdown.Header icon="tags" content="Sort by" />
               <Dropdown.Divider />
               <Dropdown.Item onClick={() => this.sortBydueDate()}>
-                <Icon name="calendar" className="right floated" />
+                <Icon
+                  name="calendar"
+                  className="right floated"
+                  style={{ paddingLeft: '10px' }}
+                />
                 Due Date
               </Dropdown.Item>
               <Dropdown.Item onClick={() => this.sortBypflag()}>
-                <Icon name="flag" className="right floated" />
+                {}
+                <Icon
+                  name="flag"
+                  className="right floated"
+                  style={{ paddingLeft: '10px' }}
+                />
                 Priority
               </Dropdown.Item>
             </Dropdown.Menu>
