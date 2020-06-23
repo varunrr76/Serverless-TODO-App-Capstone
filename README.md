@@ -5,7 +5,7 @@ To implement this project, you need to implement a simple TODO application using
 ## AWS Architecture of the application
 
 <div align="center">
-<img  src="img/ServerlesssTODOAppArchitecture.png" width="800" height="600" >
+<img  src="img/ServerlesssTODOAppArchitecture.png" width="800" height="500" >
 </div>
 
 ## Functionality of the application
@@ -18,13 +18,13 @@ Tasks:
 <img  src="img/Client1.png" width="800" height="600" >
 </div>
 
-Tasks Sortby Prioirty:
+Tasks Sortby Priority:
 
 <div align="center">
 <img  src="img/Client2ps.png" width="800" height="600" >
 </div>
 
-Tasks Search:
+Tasks Search for **clean**:
 
 <div align="center">
 <img  src="img/Client3cleansearch.png" width="800" height="400" >
@@ -72,9 +72,12 @@ It should return data that looks like this:
       "done": true,
       "attachmentUrl": "http://example.com/image.png"
     }
-  ]
+  ],
+  "LastEvaluatedKey": "%7B%22todoId%22%3A%2230418d79-9c69-41ca-b635-17482b6dde27%22%2C%22userId%22%3A%225eee6317a55c1600134e06df%22%2C%22dueDate%22%3A%222020-06-23%22%7D"
 }
 ```
+
+Also, it sends the last evaluated key, to be resent when hit **Show More** to load more todos.
 
 - `CreateTodo` - should create a new TODO for a current user. A shape of data send by a client application to this function can be found in the `CreateTodoRequest.ts` file
 
@@ -86,6 +89,7 @@ It receives a new TODO item to be created in JSON format that looks like this:
   "name": "Buy milk",
   "dueDate": "2019-07-29T20:01:45.424Z",
   "done": false,
+  "pflag": false,
   "attachmentUrl": "http://example.com/image.png"
 }
 ```
@@ -100,6 +104,7 @@ It should return a new TODO item that looks like this:
     "name": "Buy milk",
     "dueDate": "2019-07-29T20:01:45.424Z",
     "done": false,
+    "pflag": false,
     "attachmentUrl": "http://example.com/image.png"
   }
 }
@@ -113,7 +118,8 @@ It receives an object that contains three fields that can be updated in a TODO i
 {
   "name": "Buy bread",
   "dueDate": "2019-07-29T20:01:45.424Z",
-  "done": true
+  "done": true,
+  "pflag": false
 }
 ```
 
@@ -134,6 +140,12 @@ It should return a JSON object that looks like this:
   "uploadUrl": "https://s3-bucket-name.s3.eu-west-2.amazonaws.com/image.png"
 }
 ```
+
+- `attachTodoFile` - Updating the dynamoDB with the uploaded S3 file object.
+
+- `ElasticSearch Sync` - This will be triggered by the DynamoDB events and responsible to keep the two databases in sync.
+
+- `Search in ElasticSearch` - When the searched for specific todo, the search query is directed to ElasticSearch and the relevant todo items are retrieved.
 
 All functions are already connected to appropriate events from API Gateway.
 
