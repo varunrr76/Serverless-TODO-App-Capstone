@@ -7,6 +7,8 @@ import {
   APIGatewayProxyResult
 } from 'aws-lambda'
 
+import { parseUserId } from '../auth/utils'
+
 import { createLogger } from '../utils/logger'
 import { getGetSignedUrl } from '../datalayer/S3Access'
 
@@ -25,6 +27,9 @@ export const handler: APIGatewayProxyHandler = async (
   let queryString
   let from
   let size
+  const token: string = event.headers.Authorization.split(' ')[1]
+  const userId = await parseUserId(token)
+  logger.info(`${userId}`)
 
   try {
     queryString = await parseQueryParameter(event)
@@ -47,7 +52,22 @@ export const handler: APIGatewayProxyHandler = async (
   }
   const body = {
     query: {
-      wildcard: { name: { value: queryString + '*' } }
+      bool: {
+        must: [
+          {
+            match: {
+              userId
+            }
+          },
+          {
+            wildcard: {
+              name: {
+                value: queryString + '*'
+              }
+            }
+          }
+        ]
+      }
     },
     sort: 'dueDate',
     from,
@@ -68,7 +88,7 @@ export const handler: APIGatewayProxyHandler = async (
     }
     items.push(item._source)
   })
-  logger.info(`Query resp: ${resp}`)
+  logger.info(`Query resp: ${JSON.stringify(resp)}`)
   return {
     statusCode: 200,
     headers: {
@@ -118,7 +138,7 @@ async function parseQueryParameter(event: APIGatewayProxyEvent) {
 async function getQueryParameter(event: APIGatewayProxyEvent, name: string) {
   const queryParams = event.queryStringParameters
   if (!queryParams) {
-    return undefined
+    return ''
   }
 
   return queryParams[name]

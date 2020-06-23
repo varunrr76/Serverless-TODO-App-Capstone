@@ -23,8 +23,9 @@ export const handler: DynamoDBStreamHandler = async (
         name: newItem.name.S,
         dueDate: newItem.dueDate.S,
         createdAt: newItem.createdAt.S,
-        pflag: newItem.pflag.S,
-        done: newItem.done.S
+        pflag: newItem.pflag.BOOL,
+        done: newItem.done.BOOL,
+        userId: newItem.userId.S
       }
       await es.index({
         index: 'todos-index',
@@ -41,17 +42,36 @@ export const handler: DynamoDBStreamHandler = async (
       })
     } else {
       const newItem = record.dynamodb.NewImage
-      const body = {
-        doc: {
-          todoId: newItem.todoId.S,
-          name: newItem.name.S,
-          dueDate: newItem.dueDate.S,
-          createdAt: newItem.createdAt.S,
-          pflag: newItem.pflag.S,
-          done: newItem.done.S,
-          attachmentUrl: newItem.attachmentUrl.S ? newItem.attachmentUrl.S : ''
+      var attachmentUrl: string
+      var body
+      try {
+        attachmentUrl = newItem.attachmentUrl.S
+        body = {
+          doc: {
+            todoId: newItem.todoId.S,
+            name: newItem.name.S,
+            dueDate: newItem.dueDate.S,
+            createdAt: newItem.createdAt.S,
+            pflag: newItem.pflag.BOOL,
+            done: newItem.done.BOOL,
+            attachmentUrl,
+            userId: newItem.userId.S
+          }
+        }
+      } catch (e) {
+        body = {
+          doc: {
+            todoId: newItem.todoId.S,
+            name: newItem.name.S,
+            dueDate: newItem.dueDate.S,
+            createdAt: newItem.createdAt.S,
+            pflag: newItem.pflag.BOOL,
+            done: newItem.done.BOOL,
+            userId: newItem.userId.S
+          }
         }
       }
+
       await es.update({
         index: 'todos-index',
         type: 'todos',
