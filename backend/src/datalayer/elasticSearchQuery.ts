@@ -50,6 +50,13 @@ export const handler: APIGatewayProxyHandler = async (
       })
     }
   }
+
+  /* ElasticSearch Query:
+   * The Query first searches for the matching userId and
+   * then searches for the matching string with wildcard at the end.
+   * Furthermore, the number of searches are limited by "size
+   *  and the "from" as offset.
+   */
   const body = {
     query: {
       bool: {
