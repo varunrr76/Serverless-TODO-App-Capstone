@@ -177,6 +177,47 @@ logger.info('User was authorized', {
 })
 ```
 
+## ElasticSearch Query
+
+Search API:
+
+/todos/search?query={query_string}&size={size}&from={from}
+
+The authorized user can request for the relevant todos by passing the {query_string}, {size} denotes the number of the searches to be retrieved and {from} denotes the offset from where the query results shouldd be retrieved.
+
+The ElasticSearch query:
+
+```ts
+const body = {
+  query: {
+    bool: {
+      must: [
+        {
+          match: {
+            userId
+          }
+        },
+        {
+          wildcard: {
+            name: {
+              value: queryString + '*'
+            }
+          }
+        }
+      ]
+    }
+  },
+  sort: 'dueDate',
+  from,
+  size
+}
+const resp = await es.search({
+  index: 'todos-index',
+  type: 'todos',
+  body
+})
+```
+
 ## How to run the application
 
 ### Backend
