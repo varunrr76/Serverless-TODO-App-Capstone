@@ -218,6 +218,10 @@ const resp = await es.search({
 })
 ```
 
+## Sort Feature
+
+The sort feature enables the usaer to sort the todos by dueDate as well as by priotity flag.
+
 ## How to run the application
 
 ### Backend
